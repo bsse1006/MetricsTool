@@ -13,7 +13,8 @@ public class Halstead {
             "implements", "protected", "throw", "byte", "else",	"import", "public", "throws", "case",
             "enum", "instanceof", "return",	"transient", "catch", "extends", "int", "String", "short", "try", "char",
             "final", "interface", "static", "void", "class", "finally", "long", "strictfp", "volatile",
-            "const", "float", "native", "super", "while"};
+            "const", "float", "native", "super", "while", "println", "print", "nextLine", "nextBoolean", "nextByte",
+            "nextDouble", "nextFloat", "nextInt", "nextLong", "nextShort"};
 
     List<String> operands = new ArrayList<>();
 
@@ -53,9 +54,11 @@ public class Halstead {
             }
 
             String [] tokens = line.strip().split(" ");
+            String conToken = "";
             for(String token:tokens){
-                filterTokens(token);
+                conToken = conToken + token;
             }
+            filterTokens(conToken);
         }
 
         System.out.println("*** Operators ***");
@@ -94,6 +97,7 @@ public class Halstead {
 
     public String sliceToken (String token)
     {
+        //System.out.println(token);
         int operatorPosition = token.length();
 
         for (String operator: operators)
@@ -144,14 +148,47 @@ public class Halstead {
             }
         }*/
 
-        if (!mapOfOperands.containsKey(remainingToken))
+        //System.out.println(token);
+
+        if (operatorPosition<token.length())
         {
-            mapOfOperands.put(remainingToken, 1);
+            if (token.charAt(operatorPosition)=='(')
+            {
+                if (!mapOfOperators.containsKey(remainingToken))
+                {
+                    mapOfOperators.put(remainingToken, 1);
+                }
+                else
+                {
+                    mapOfOperators.put(remainingToken, mapOfOperators.get(remainingToken)+1);
+                }
+            }
+            else
+            {
+                if (!mapOfOperands.containsKey(remainingToken))
+                {
+                    mapOfOperands.put(remainingToken, 1);
+                }
+                else
+                {
+                    mapOfOperands.put(remainingToken, mapOfOperands.get(remainingToken)+1);
+                }
+            }
         }
         else
         {
-            mapOfOperands.put(remainingToken, mapOfOperands.get(remainingToken)+1);
+            if (!mapOfOperands.containsKey(remainingToken))
+            {
+                mapOfOperands.put(remainingToken, 1);
+            }
+            else
+            {
+                mapOfOperands.put(remainingToken, mapOfOperands.get(remainingToken)+1);
+            }
         }
+
+        //System.out.println(mapOfOperators);
+        //System.out.println(mapOfOperands);
 
         return token.substring(operatorPosition);
     }
