@@ -6,11 +6,11 @@ public class Saal {
     {
         /*dhabdhbashdbahd*/
 
-        int i = 0;
+        int i = 0; /*sbbasdh*/ int l = 9;
         /*asdhadshbahs
         sdnjandjansd
         asdkadasd
-         */
+         */ int o = 0;
         String str = "I am Yasin";
 //asasdadasd
         for (int j=0; j<5; j++) //ejhfehbfhsf

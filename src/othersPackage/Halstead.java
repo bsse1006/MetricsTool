@@ -230,24 +230,29 @@ public class Halstead {
 
            if (multiCommentStartPosition!=-1&&multiCommentEndPosition!=-1)
            {
+               commentFilteredLines.add(line.substring(0,multiCommentStartPosition).concat(line.substring(multiCommentEndPosition+2)));
                insideComment = false;
            }
            else if (!insideComment&&lineCommentPosition!=-1)
            {
-               if (line.substring(0,lineCommentPosition).length()>0)
-               {
-                   commentFilteredLines.add(line.substring(0,lineCommentPosition));
-               }
+               commentFilteredLines.add(line.substring(0,lineCommentPosition));
            }
            else if (insideComment&&multiCommentEndPosition!=-1)
            {
+               commentFilteredLines.add(line.substring(multiCommentEndPosition+2));
                insideComment = false;
            }
            else if (multiCommentStartPosition!=-1)
            {
-                insideComment = true;
+               commentFilteredLines.add(line.substring(0,multiCommentStartPosition));
+               insideComment = true;
            }
-           else {
+           else if (insideComment)
+           {
+               insideComment = true;
+           }
+           else
+           {
                commentFilteredLines.add(line);
            }
 
