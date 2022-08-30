@@ -26,6 +26,8 @@ public class Operation {
     int lloc = 0;
     int comments = 0;
 
+    int wloc = 0;
+
     IVariableBinding s;
     public Set<IVariableBinding> setOfVariableBinding = new HashSet<>();
     public Set<IMethodBinding> setOfMethodBinding = new HashSet<>();
@@ -63,7 +65,6 @@ public class Operation {
         final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
 
         String [] ploc = str.split("\n", -1);
-        int wloc = 0;
 
         for (String line: ploc)
         {
@@ -73,8 +74,6 @@ public class Operation {
         }
 
         loc = ploc.length;
-
-        System.out.println("WLOC: " + wloc);
 
 
 
@@ -101,10 +100,6 @@ public class Operation {
 
             });
         }
-
-        System.out.println("PLOC: " + (loc - comments - wloc));
-
-        System.out.println("LOC: " + (loc));
 
 
         root = new GraphNode();
@@ -234,6 +229,19 @@ public class Operation {
                 return true;
             }
 
+            public boolean visit (MethodDeclaration node)
+            {
+                System.out.println("Method Name: " + node.getName());
+                return true;
+            }
+
+            public void endVisit (MethodDeclaration node)
+            {
+                System.out.println("Cyclomatic Complexity: " + complexity);
+
+                complexity = 1;
+            }
+
             public boolean visit (SwitchStatement node) {
                 //System.out.println(node);
                 GraphNode temp;
@@ -327,89 +335,6 @@ public class Operation {
 
     }
 
-    void recursionForForwardSlicing (GraphNode g)
-    {
-        /*if(g==null)
-            return;*/
-
-        nodesForForwardSlicing.add(g.node);
-
-        for(GraphNode gg : g.children)
-        {
-            recursionForForwardSlicing(gg);
-        }
-    }
-
-    GraphNode getStartingNode (GraphNode node)
-    {
-        GraphNode foundStartingNode = null;
-        for(GraphNode g : node.children)
-        {
-            if(g.node.toString().equals(startingNode.toString())&&g.node.getStartPosition()==startingNode.getStartPosition())
-            {
-                return g;
-            }
-            foundStartingNode = getStartingNode(g);
-
-            if(foundStartingNode!=null)
-                break;
-        }
-        return foundStartingNode;
-    }
-
-    void recursionForBackwardSlicing (GraphNode g)
-    {
-        if(g.equals(root))
-            return;
-
-        nodesForBackwardSlicing.add(g.node);
-
-        for(GraphNode gg : g.parents)
-        {
-            recursionForBackwardSlicing(gg);
-        }
-    }
-
-    public void parser (String str) {
-
-        ASTParser parser = ASTParser.newParser(AST.JLS3);
-        parser.setResolveBindings(true);
-        parser.setSource(str.toCharArray());
-        parser.setKind(ASTParser.K_COMPILATION_UNIT);
-        //parser.setEnvironment(new String[] {"C:\\Users\\ASUS\\Desktop\\demo\\out\\production\\demo"}, new String[] {"C:\\Users\\ASUS\\Desktop\\demo\\src"}, null, true);
-        parser.setEnvironment(null, null, null, true);
-        parser.setUnitName("Saal.java");
-        final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-
-        cu.accept(new ASTVisitor() {
-
-            public void preVisit (ASTNode node) {
-                if(node instanceof Statement && !(node instanceof Block))
-                {
-                    /*startingNode = node;
-                    GraphNode foundNode = getStartingNode(root);
-                    System.out.println(foundNode.node);
-                    recursionForBackwardSlicing(foundNode);
-                    recursionForForwardSlicing(foundNode);
-                    System.out.println("Backward slicing:");
-                    for(ASTNode astNode: nodesForBackwardSlicing)
-                    {
-                        System.out.println(astNode);
-                    }
-                    System.out.println("Forward slicing:");
-                    for(ASTNode astNode: nodesForForwardSlicing)
-                    {
-                        System.out.println(astNode);
-                    }
-                    System.out.println("---------------------------------");
-                    nodesForBackwardSlicing.clear();
-                    nodesForForwardSlicing.clear();*/
-                }
-            }
-
-        });
-    }
-
     /*public void halsted (String str)
     {
 
@@ -419,60 +344,25 @@ public class Operation {
         try {
             parse(readFileToString("src/sourcePackage/Saal.java"));
 
-            //halsted("src/sourcePackage/Saal.java");
+            //System.out.println("Cyclomatic Complexity: " + complexity);
 
-            System.out.println("Cyclomatic Complexity: " + complexity);
+            System.out.println();
+
+            System.out.println("****** LOC ******");
+
+            System.out.println("WLOC: " + wloc);
+
+            System.out.println("PLOC: " + (loc - comments - wloc));
+
+            System.out.println("LOC: " + (loc));
 
             System.out.println("LLOC: " + lloc);
 
             System.out.println("Comments: " + comments);
 
-            //kut(root);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        try {
-            parser(readFileToString("src/sourcePackage/Saal.java"));
-
-            //kut(root);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        /*for(ASTNode n : nodes)
-        {
-            System.out.println(n);
-        }*/
-
-        //printTree(root,"");
-        //cyclomaticComplexity(root, "");
-
     }
-
-    public void printTree (GraphNode currentRoot, String indent)
-    {
-        System.out.print(indent);
-        System.out.println(currentRoot.node);
-
-        for(GraphNode child: currentRoot.children)
-        {
-            printTree(child, indent.concat("----"));
-        }
-    }
-
-    /*public int cyclomaticComplexity (GraphNode currentRoot, String indent)
-    {
-        System.out.print(indent);
-        System.out.println(currentRoot.node);
-
-        for(GraphNode child: currentRoot.children)
-        {
-            printTree(child, indent.concat("----"));
-        }
-
-        return 0;
-    }*/
 }

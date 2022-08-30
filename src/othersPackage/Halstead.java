@@ -25,13 +25,19 @@ public class Halstead {
     private List<String> commentFilteredLines = new ArrayList<>();
 
     public void HalsteadCalculation(int totalOperators,int totalOperands,int uniqueOperators, int uniqueOperands) {
-        int Vocabulary = uniqueOperators + uniqueOperands;
-        int log = (int)(Math.log(Vocabulary)/Math.log(2));
-        int Volume = (totalOperators+totalOperands)* log;
+        double Vocabulary = uniqueOperators + uniqueOperands;
+        double log = (int)(Math.log(Vocabulary)/Math.log(2));
+        double Volume = (totalOperators+totalOperands)* log;
+        double Difficulty = ((uniqueOperators/ 2) * (totalOperands / uniqueOperands));
+        double Effort = Difficulty * Volume;
 
-        System.out.println("***************");
+        System.out.println();
+        System.out.println("**** HALSTEAD ****");
         System.out.println("Vocabulary: "+Vocabulary);
         System.out.println("Volume: "+ Volume);
+        System.out.println("Difficulty: "+Difficulty);
+        System.out.println("Effort: "+ Effort);
+        System.out.println();
         System.out.println("***************");
     }
 
@@ -40,6 +46,7 @@ public class Halstead {
         filterComments();
         for (String line: commentFilteredLines)
         {
+            //System.out.println(line);
             String quote = "";
             if (line.contains("\""))
             {
@@ -67,6 +74,7 @@ public class Halstead {
             System.out.println(key + " = "+mapOfOperators.get(key));
         }
 
+        System.out.println();
         System.out.println("*** Operands ***");
         for(String key:mapOfOperands.keySet())
         {
@@ -197,6 +205,9 @@ public class Halstead {
     {
         String [] lines = sourceCode.split("\n");
         int lineCommentPosition = -1;
+        int multiCommentStartPosition = -1;
+        int multiCommentEndPosition = -1;
+        boolean insideComment = false;
 
         for (String line: lines)
         {
@@ -208,20 +219,41 @@ public class Halstead {
            {
                lineCommentPosition = line.indexOf("//");
            }
+           if (line.contains("/*"))
+           {
+               multiCommentStartPosition = line.indexOf("/*");
+           }
+           if (line.contains("*/"))
+           {
+               multiCommentEndPosition = line.indexOf("*/");
+           }
 
-           if (lineCommentPosition!=-1)
+           if (multiCommentStartPosition!=-1&&multiCommentEndPosition!=-1)
+           {
+               insideComment = false;
+           }
+           else if (!insideComment&&lineCommentPosition!=-1)
            {
                if (line.substring(0,lineCommentPosition).length()>0)
                {
                    commentFilteredLines.add(line.substring(0,lineCommentPosition));
                }
            }
-           else
+           else if (insideComment&&multiCommentEndPosition!=-1)
            {
+               insideComment = false;
+           }
+           else if (multiCommentStartPosition!=-1)
+           {
+                insideComment = true;
+           }
+           else {
                commentFilteredLines.add(line);
            }
 
            lineCommentPosition = -1;
+           multiCommentStartPosition = -1;
+           multiCommentEndPosition = -1;
         }
     }
 }
