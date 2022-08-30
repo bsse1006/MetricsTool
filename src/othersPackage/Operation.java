@@ -51,6 +51,7 @@ public class Operation {
     }
 
     public void parse(String str) {
+        Halstead halstead = new Halstead(str);
         ASTParser parser = ASTParser.newParser(AST.JLS3);
         parser.setResolveBindings(true);
         parser.setSource(str.toCharArray());
@@ -60,32 +61,6 @@ public class Operation {
         parser.setUnitName("Saal.java");
 
         final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-
-        HalsteadASTVisitor halsteadASTVisitor= new HalsteadASTVisitor();
-        cu.accept(halsteadASTVisitor);
-
-        int DistinctOperators =halsteadASTVisitor.oprt.size();
-        int DistinctOperands = halsteadASTVisitor.names.size();
-
-        System.out.println(halsteadASTVisitor.names);
-        System.out.println(halsteadASTVisitor.oprt);
-
-        int OperatorCount=0;
-        for (int f : halsteadASTVisitor.oprt.values()) {
-            OperatorCount+= f;
-        }
-        int TotalOperators = OperatorCount;
-
-        int OperandCount=0;
-        for (int f : halsteadASTVisitor.names.values()) {
-            OperandCount += f;
-        }
-        int TotalOperands=OperandCount;
-
-        System.out.println("DistinctOperands = " + DistinctOperands);
-        System.out.println("DistinctOperators = " + DistinctOperators);
-        System.out.println("TotalOperands = " + TotalOperands);
-        System.out.println("TotalOperators = " + TotalOperators);
 
         String [] ploc = str.split("\n", -1);
         int wloc = 0;

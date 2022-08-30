@@ -4,11 +4,19 @@ public class Saal {
 
     public static void main(String[] args)
     {
-        int a = 0 + 1 - 2;
+        int i = 0;
+        String str = "I am Yasin";
+//asasdadasd
+        for (int j=0; j<5; j++) //ejhfehbfhsf
+        {
+            System.out.println(j); //fgefbwhfb
+        }
+
+        add(5,7);
     }
 
-    public static int add (int a, int b)
+    public static void add (int a, int b)
     {
-        return a+b;
+        boolean bool = true;
     }
 }
