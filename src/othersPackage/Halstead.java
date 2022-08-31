@@ -16,8 +16,6 @@ public class Halstead {
             "const", "float", "native", "super", "while", "println", "print", "nextLine", "nextBoolean", "nextByte",
             "nextDouble", "nextFloat", "nextInt", "nextLong", "nextShort"};
 
-    List<String> operands = new ArrayList<>();
-
     public HashMap<String, Integer> mapOfOperands = new HashMap<String, Integer>();
     public HashMap<String, Integer> mapOfOperators = new HashMap<String, Integer>();
 
@@ -132,32 +130,6 @@ public class Halstead {
 
         String remainingToken = token.substring(0,operatorPosition);
 
-        /*for (String operand: operands)
-        {
-            if (remainingToken.equals(operand))
-            {
-                if (!mapOfOperands.containsKey(operand))
-                {
-                    mapOfOperands.put(operand, 1);
-                }
-                else
-                {
-                    mapOfOperands.put(operand, mapOfOperands.get(operand)+1);
-                }
-            }
-
-            if (!mapOfOperands.containsKey(remainingToken))
-            {
-                mapOfOperands.put(remainingToken, 1);
-            }
-            else
-            {
-                mapOfOperands.put(remainingToken, mapOfOperands.get(remainingToken)+1);
-            }
-        }*/
-
-        //System.out.println(token);
-
         if (operatorPosition<token.length())
         {
             if (token.charAt(operatorPosition)=='(')
@@ -195,9 +167,6 @@ public class Halstead {
             }
         }
 
-        //System.out.println(mapOfOperators);
-        //System.out.println(mapOfOperands);
-
         return token.substring(operatorPosition);
     }
 
@@ -211,7 +180,7 @@ public class Halstead {
 
         for (String line: lines)
         {
-           if (line.strip().isEmpty())
+           if (line.isBlank())
            {
                continue;
            }
@@ -247,11 +216,7 @@ public class Halstead {
                commentFilteredLines.add(line.substring(0,multiCommentStartPosition));
                insideComment = true;
            }
-           else if (insideComment)
-           {
-               insideComment = true;
-           }
-           else
+           else if (!insideComment)
            {
                commentFilteredLines.add(line);
            }
